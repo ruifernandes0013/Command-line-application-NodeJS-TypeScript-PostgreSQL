@@ -1,10 +1,18 @@
 import { db } from '../../../database/Database'
 import { IUser } from '../dtos/User'
 
-async function storeUser(user: IUser): Promise<void> {
+export interface IStoreLanguages {
+  userId: number
+  languages: string[]
+}
+export interface IParams {
+  location?: string, language?: string
+}
+
+async function storeUserDB(user: IUser): Promise<IUser> {
   try {
     const text =
-      'INSERT INTO users(name, type, location, bio, public_repos, followers, following) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *'
+      'INSERT INTO users(name, type, location, bio, publicRepos, followers, following) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *'
     const values = [
       user.name,
       user.type,
@@ -13,27 +21,51 @@ async function storeUser(user: IUser): Promise<void> {
       user.public_repos,
       user.followers,
       user.following,
+      new Date(),
+      null
     ]
     const result = await db.one(text, values)
-    console.log('Data inserted successfully:', result)
+    return result as IUser
   } catch (error: any) {
     throw new Error(
       `Error fetching and storing user information: ${error.message}`,
     )
   }
 }
-async function getUsers(location?: string): Promise<IUser[]> {
+async function getUsersDB(params: IParams): Promise<IUser[]> {
   try {
-    const text = location
-      ? 'SELECT * FROM Users WHERE location LIKE $1'
-      : 'SELECT * FROM Users'
-    const values = location ? [`%${location}%`] : null
+    let text = 'SELECT * FROM Users';
+    const values: any[] = [];
 
-    const result = await db.manyOrNone(text, values)
-    return result
+    if (params.location) {
+      text += ' WHERE LOWER(location) LIKE LOWER($1)';
+      values.push(`%${params.location}%`);
+    }
+
+    if (params.language) {
+      text += ' INNER JOIN UserLanguages ON Users.id = UserLanguages.userId AND LOWER(language) LIKE LOWER($1)';
+      values.push(`%${params.language}%`);
+    }
+
+    const result = await db.manyOrNone(text, values);
+    return result;
   } catch (error: any) {
-    throw new Error(`Error listing users: ${error.message}`)
+    throw new Error(`Error listing users: ${error.message}`);
   }
 }
 
-export { storeUser, getUsers }
+async function storeLanguagesDB({ userId, languages }: IStoreLanguages): Promise<string[]> {
+  try {
+    const insertQuery = 'INSERT INTO userlanguages(userId,language) VALUES($1, $2) ';
+
+    await Promise.all(languages.map(language =>
+      db.none(insertQuery, [userId, language])
+    ));
+
+    return languages;
+  } catch (error: any) {
+    throw new Error(`Error storing languages: ${error.message}`);
+  }
+}
+
+export { storeUserDB, getUsersDB, storeLanguagesDB }

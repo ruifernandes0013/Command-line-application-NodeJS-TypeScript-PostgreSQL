@@ -16,6 +16,8 @@
         "port": {
             "ENV": "POSTGRES_PORT"
         },
-        "schema": "public"
-    }
+        "schema": "public",
+        "multipleStatements": true
+    },
+    "sql-file": true
 }

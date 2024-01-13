@@ -1,8 +1,10 @@
 import * as yargs from 'yargs'
 import 'dotenv/config'
 import {
-  fetchAndStoreUser,
+  fetchAndStoreUserInformation,
   listAllUsers,
+  listAllUsersByLanguage,
+  listAllUsersByLocation,
 } from './shared/services/GitHubService'
 
 const argv = yargs
@@ -11,13 +13,15 @@ const argv = yargs
     'Fetch and store user information',
     {},
     async (args: any) => {
-      await fetchAndStoreUser(args.username)
+      await fetchAndStoreUserInformation(args.username)
     },
   )
   .command('list', 'List all users', {}, () => listAllUsers())
   .command('location <location>', 'List users by location', {}, (args: any) =>
-    listAllUsers(args.location),
+    listAllUsersByLocation(args.location),
   )
-  // .command('listLanguages <username>', 'List languages by user', {}, (args) => listLanguagesByUser(args.username))
+  .command('language <language>', 'List users by language', {}, (args: any) => {
+    listAllUsersByLanguage(args.language)
+  })
   .demandCommand()
   .help().argv

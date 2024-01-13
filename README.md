@@ -35,7 +35,7 @@ This command-line application is developed using NodeJS and TypeScript with Post
 - Docker
 - Axios
 - Dotenv
-- Pg
+- [pg-promise](https://github.com/vitaly-t/pg-promise) for PostgreSQL database access.
 - Ts
 - Yargs
 - db

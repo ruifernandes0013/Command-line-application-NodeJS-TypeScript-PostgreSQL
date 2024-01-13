@@ -1,4 +1,5 @@
 export interface IUser {
+  id?: number
   name: string
   type: string
   location: string
@@ -6,4 +7,6 @@ export interface IUser {
   public_repos: number
   followers: number
   following: number
+  created_at?: Date
+  updated_at?: Date
 }
