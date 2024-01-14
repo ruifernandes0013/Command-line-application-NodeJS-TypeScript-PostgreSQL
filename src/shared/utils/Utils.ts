@@ -1,4 +1,4 @@
-import { type IUser } from '../../modules/User/dtos/User'
+import { type IUser } from '../../modules/User/dtos/IUser'
 
 function validateUser(user: IUser): void {
   const missingProperties = []
@@ -14,14 +14,13 @@ function extractProgrammingLanguages(repositories: []) {
   try {
     return repositories.reduce((acc: string[], repo: any) => {
       if (repo.language && !acc.includes(repo.language)) {
-        acc.push(repo.language);
+        acc.push(repo.language)
       }
-      return acc;
-    }, []);
-  } catch (error) {
-    throw new Error(`Failed reading programming languages`)
+      return acc
+    }, [])
+  } catch (error: any) {
+    throw new Error(`Failed reading programming languages: ${error.message}`)
   }
-
 }
 
 export { validateUser, extractProgrammingLanguages }

@@ -6,6 +6,7 @@ import {
   listAllUsersByLanguage,
   listAllUsersByLocation,
 } from './shared/services/GitHubService'
+import logger from './shared/logger'
 
 const argv = yargs
   .command(
@@ -13,15 +14,44 @@ const argv = yargs
     'Fetch and store user information',
     {},
     async (args: any) => {
-      await fetchAndStoreUserInformation(args.username)
+      try {
+        await fetchAndStoreUserInformation(args.username)
+      } catch (error: any) {
+        logger.error(error.message)
+      }
     },
   )
-  .command('list', 'List all users', {}, () => listAllUsers())
-  .command('location <location>', 'List users by location', {}, (args: any) =>
-    listAllUsersByLocation(args.location),
-  )
-  .command('language <language>', 'List users by language', {}, (args: any) => {
-    listAllUsersByLanguage(args.language)
+  .command('list', 'List all users', {}, async () => {
+    try {
+      await listAllUsers()
+    } catch (error: any) {
+      logger.error(error.message)
+    }
   })
-  .demandCommand()
+  .command(
+    'location <location>',
+    'List users by location',
+    {},
+    async (args: any) => {
+      try {
+        await listAllUsersByLocation(args.location)
+      } catch (error: any) {
+        logger.error(error.message)
+      }
+    },
+  )
+  .command(
+    'language <language>',
+    'List users by language',
+    {},
+    async (args: any) => {
+      try {
+        await listAllUsersByLanguage(args.language)
+      } catch (error: any) {
+        logger.error(error.message)
+      }
+    },
+  )
+  .usage('Usage: npm run start <command> [options]')
+  .demandCommand(1, 'You need at least one command before moving on')
   .help().argv

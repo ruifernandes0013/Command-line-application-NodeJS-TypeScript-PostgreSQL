@@ -8,22 +8,14 @@
     "pretty": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "lib": [
-      "es6",
-      "DOM"
-    ],
+    "lib": ["es6", "DOM"],
     "resolveJsonModule": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true
   },
-  "include": [
-    "./src/**/*.js",
-    "./src/**/*.ts",
-  ],
+  "include": ["./src/**/*.js", "./src/**/*.ts"],
   "typedocOptions": {
     "mode": "file",
     "out": "docs"

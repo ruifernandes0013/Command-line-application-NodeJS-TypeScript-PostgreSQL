@@ -10,14 +10,15 @@ This command-line application is developed using NodeJS and TypeScript with Post
 - [Running the Application](#running-the-application)
 - [Commands](#commands)
 
-
 ## Features
 
 1. **Fetch GitHub User Information:**
+
    - Retrieve information about a specified GitHub user using the GitHub API.
    - Store user data in one or more PostgreSQL database tables.
 
 2. **Database Integration:**
+
    - Utilizes PostgreSQL for storing and managing GitHub user data.
    - Database setup provided in `docker-compose.yml`.
 
@@ -43,6 +44,7 @@ This command-line application is developed using NodeJS and TypeScript with Post
 ## Setup
 
 1. **Database Configuration:**
+
    - Define PostgreSQL connection details in a `.env` file.
 
    ```dotenv
@@ -53,30 +55,32 @@ This command-line application is developed using NodeJS and TypeScript with Post
    POSTGRES_PASSWORD=your_password
    ```
 
-
 2. **Decrypt PostgreSQL Password:**
-    - Decrypt the PostgreSQL password using Ansible Vault. (application_postgres.yml)
 
-    ```yaml
-    password_postgres: !vault |
-      $ANSIBLE_VAULT;1.1;AES256
-      [Encrypted Password Here]
-    ```
+   - Decrypt the PostgreSQL password using Ansible Vault. (application_postgres.yml)
+
+   ```yaml
+   password_postgres: !vault |
+     $ANSIBLE_VAULT;1.1;AES256
+     [Encrypted Password Here]
+   ```
 
 3. **Running Migrations:**
-    - Execute the following command to run migrations in the database.
 
-    ```bash
-    db-migrate up
-    ```
-    
+   - Execute the following command to run migrations in the database.
+
+   ```bash
+   db-migrate up
+   ```
+
 4. **Running the Application:**
-    - Execute the following commands to set up and run the application.
 
-    ```bash
-    npm install
-    npm run start -- <command> <arguments>
-    ```
+   - Execute the following commands to set up and run the application.
+
+   ```bash
+   npm install
+   npm run start -- <command> <arguments>
+   ```
 
 ## Commands:
 
@@ -84,6 +88,3 @@ This command-line application is developed using NodeJS and TypeScript with Post
 - `list`: Display all users stored in the database.
 - `listByLocation <location>`: List users from a given location stored in the database.
 - `listLanguages <username>`: Query and store programming languages of a user in the database.
-
-
-

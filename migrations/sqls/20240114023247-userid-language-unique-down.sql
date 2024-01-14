@@ -1,0 +1,2 @@
+ALTER TABLE UserLanguages
+DROP CONSTRAINT unique_userid_language_constraint;
