@@ -137,4 +137,6 @@ export {
   listAllUsers,
   listAllUsersByLocation,
   listAllUsersByLanguage,
+  fetchUser,
+  fetchProgrammingLanguages
 }
