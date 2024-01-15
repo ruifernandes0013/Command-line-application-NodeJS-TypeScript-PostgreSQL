@@ -1,4 +1,4 @@
 export interface IUserSearchParams {
-  location?: string
-  language?: string
+  location?: string;
+  language?: string;
 }

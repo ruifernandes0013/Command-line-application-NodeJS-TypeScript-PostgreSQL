@@ -9,42 +9,64 @@ This command-line application is developed using NodeJS and TypeScript with Post
 - [Setup](#setup)
 - [Running the Application](#running-the-application)
 - [Commands](#commands)
+- [Error Handling and Potential Issues](#error-handling-and-potential-issues)
+
 
 ## Features
 
 1. **Fetch GitHub User Information:**
-
    - Retrieve information about a specified GitHub user using the GitHub API.
-   - Store user data in one or more PostgreSQL database tables.
+   - Store user data and programming languages.
 
-2. **Database Integration:**
 
-   - Utilizes PostgreSQL for storing and managing GitHub user data.
-   - Database setup provided in `docker-compose.yml`.
+2. **List Users and Filtering:**
+   - View a list of all users stored in the database.
+   - Filter users based on their location.
+   - Filter users based on the programming language they are associated with.
 
-3. **Command-Line Options:**
-   - `fetch <username>`: Fetch and store user information.
-   - `list`: Display all users already stored in the database.
-   - `listByLocation <location>`: List users from a given location.
-   - `listLanguages <username>`: Query and store programming languages for a user.
+
 
 ## Dependencies
 
-- NodeJS
-- Typescript
-- PostgreSQL
-- Docker
-- Axios
-- Dotenv
+- [NodeJS](https://nodejs.org/en)
+- [Typescript](https://www.typescriptlang.org/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
 - [pg-promise](https://github.com/vitaly-t/pg-promise) for PostgreSQL database access.
-- Ts
-- Yargs
-- db
+- [db-migrate](https://db-migrate.readthedocs.io/en/latest/) for database migrations
 
 ## Setup
 
-1. **Database Configuration:**
+1. **Install the Application Dependencies:**
+    - Execute the following commands to set up the application.
 
+    ```bash
+    npm install
+    ```
+    
+
+2. **Decrypt PostgreSQL Password:**
+    - Decrypt the PostgreSQL password using [Ansible Vault](https://docs.ansible.com/ansible/2.9/user_guide/vault.html). (application_postgres.yml)
+
+    ```yaml
+    password_postgres: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      [Encrypted Password Here]
+    ```
+
+    - To decrypt the PostgreSQL password execute the following command
+    
+    ```bash
+     ansible-vault decrypt <file-with-encrypted-password> --vault-password-file=<file-with-vault-key>.key
+     ```
+    
+    - To view the decrypted password execute the following command
+    
+    ```bash
+     cat <file-with-encrypted-password> 
+    ```
+
+3. **Database Configuration:**
    - Define PostgreSQL connection details in a `.env` file.
 
    ```dotenv
@@ -55,32 +77,29 @@ This command-line application is developed using NodeJS and TypeScript with Post
    POSTGRES_PASSWORD=your_password
    ```
 
-2. **Decrypt PostgreSQL Password:**
+4. **Running Migrations:**
+    - Execute the following command to run migrations in the database.
 
-   - Decrypt the PostgreSQL password using Ansible Vault. (application_postgres.yml)
+    ```bash
+    db-migrate up
+    ```
+    
+5. **Running the Application:**
+    - Execute the following commands to set up and run the application.
 
-   ```yaml
-   password_postgres: !vault |
-     $ANSIBLE_VAULT;1.1;AES256
-     [Encrypted Password Here]
-   ```
+    ```bash
+    npm run start -- <command> <arguments>
+    ```
 
-3. **Running Migrations:**
+6. **Running the ESlint and Prettier:**
+    - Execute the following commands.
 
-   - Execute the following command to run migrations in the database.
+    ```bash
+    npm run prettier
+    npm run lint
+    ```
 
-   ```bash
-   db-migrate up
-   ```
-
-4. **Running the Application:**
-
-   - Execute the following commands to set up and run the application.
-
-   ```bash
-   npm install
-   npm run start -- <command> <arguments>
-   ```
+    
 
 ## Commands:
 
@@ -88,3 +107,35 @@ This command-line application is developed using NodeJS and TypeScript with Post
 - `list`: Display all users stored in the database.
 - `listByLocation <location>`: List users from a given location stored in the database.
 - `listLanguages <username>`: Query and store programming languages of a user in the database.
+
+
+
+## Error Handling and Potential Issues:
+
+The application is designed to handle errors gracefully. However, you may encounter the following issues:
+ 
+-   Network Issues:
+
+    Ensure a stable internet connection for successful communication with the GitHub API.
+ 
+- GitHub API Rate Limiting:
+
+    Be mindful of GitHub API rate limits. If exceeded, you might need to wait to increase limits.
+
+- Database Connection:
+
+    Verify PostgreSQL connection details in the .env file and ensure the database is running.
+
+- Command-Line Arguments:
+
+    Provide valid command-line arguments to avoid errors.
+
+- Security:
+
+    Always secure sensitive information such as database credentials and decryption keys.
+
+- Error Logging:
+
+    Review error messages and logs for troubleshooting. The application logs errors using the provided logger.
+
+
