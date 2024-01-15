@@ -98,8 +98,22 @@ This command-line application is developed using NodeJS and TypeScript with Post
     npm run lint
     ```
 
-    
+7. **Running Tests:**
+    - Execute the following commands.
 
+    ```bash
+    npm run test
+    npm run test:watch
+    ```
+    
+7. **Build and run the Application:**
+    - Execute the following commands to build and run the build.
+
+    ```bash
+    npm run build
+    npm run start:build
+    ```
+    
 ## Commands:
 
 - `fetch <username>`: Fetch GitHub user information and store it in the database.

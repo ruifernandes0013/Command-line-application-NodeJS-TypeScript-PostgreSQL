@@ -8,16 +8,30 @@
     "pretty": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "lib": ["es6", "DOM"],
+    "lib": [
+      "es6",
+      "DOM"
+    ],
     "resolveJsonModule": true,
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true
   },
-  "include": ["./src/**/*.js", "./src/**/*.ts"],
+  "include": [
+    "./src/**/*.js",
+    "./src/**/*.ts"
+  ],
   "typedocOptions": {
     "mode": "file",
     "out": "docs"
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "!node_modules/@types",
+    "./dist"
+  ]
 }
