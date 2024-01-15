@@ -70,10 +70,9 @@ This command-line application is developed using NodeJS and TypeScript with Post
    - Define PostgreSQL connection details in a `.env` file.
 
    ```dotenv
-   POSTGRES_HOST=db
+   POSTGRES_USER=postgres
+   POSTGRES_DB=mydb
    POSTGRES_PORT=5432
-   POSTGRES_DB=your_database
-   POSTGRES_USER=your_user
    POSTGRES_PASSWORD=your_password
    ```
 
