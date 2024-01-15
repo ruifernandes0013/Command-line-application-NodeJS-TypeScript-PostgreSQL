@@ -62,7 +62,7 @@ async function getUsersDB(params: IUserSearchParams): Promise<IUser[]> {
     if (params.language) {
       text += ` INNER JOIN UserLanguages
          ON Users.id = UserLanguages.userId AND LOWER(language) LIKE LOWER($1)`;
-      values.push(`% ${params.language}% `);
+      values.push(`%${params.language}%`);
     }
 
     const result = await db.manyOrNone(text, values);

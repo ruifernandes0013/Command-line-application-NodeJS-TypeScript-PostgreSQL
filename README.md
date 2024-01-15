@@ -66,7 +66,7 @@ This command-line application is developed using NodeJS and TypeScript with Post
      cat <file-with-encrypted-password> 
     ```
 
-3. **Database Configuration:**
+3. **Database Configuration and execution:**
    - Define PostgreSQL connection details in a `.env` file.
 
    ```dotenv
@@ -74,6 +74,12 @@ This command-line application is developed using NodeJS and TypeScript with Post
    POSTGRES_DB=mydb
    POSTGRES_PORT=5432
    POSTGRES_PASSWORD=your_password
+   ```
+  
+   - Execute the following command to run the database.
+
+   ```bash
+    docker-compose up
    ```
 
 4. **Running Migrations:**
