@@ -8,7 +8,7 @@ const dbConfig = {
   user: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
 };
+const pgpInstance = pgp();
+const db = pgpInstance(dbConfig);
 
-const db = pgp()(dbConfig);
-
-export { db };
+export { db, pgpInstance };

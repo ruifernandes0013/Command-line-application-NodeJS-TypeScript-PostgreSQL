@@ -1,7 +1,11 @@
 import axios from 'axios';
-import { getUsersDB, storeUserDB } from '../../modules/User/repos/UserRepo';
+import {
+  getUsersDetailsDB,
+  getUsersByLocationDB,
+  storeUserDB,
+} from '../../modules/User/repos/UserRepo';
 import { extractProgrammingLanguages, validateUser } from '../utils/Utils';
-import { type IUser } from '../../modules/User/dtos/IUser';
+import { type IUserDTO } from '../../modules/User/dtos/IUserDTO';
 import logger from '../logger';
 // eslint-disable-next-line max-len
 import { storeUserLanguagesDB } from '../../modules/UserLanguage/repos/UserLanguageRepo';
@@ -14,8 +18,8 @@ import { storeUserLanguagesDB } from '../../modules/UserLanguage/repos/UserLangu
  */
 async function fetchAndStoreUserInformation(username: string): Promise<void> {
   const user = await fetchUser(username);
-  validateUser(user as IUser);
-  const result = await storeUserDB(user as IUser);
+  validateUser(user as IUserDTO);
+  const result = await storeUserDB(user as IUserDTO);
 
   const languages = await fetchProgrammingLanguages(username);
   if (languages.length > 0)
@@ -27,16 +31,17 @@ async function fetchAndStoreUserInformation(username: string): Promise<void> {
 }
 
 /**
- * Lists all users in the database.
+ * Lists users in the database.
  *
+ * @param {string} language - The programming language to filter users by.
  * @throws {Error} Throws an error if listing users fails.
  */
-async function listAllUsers(): Promise<void> {
-  const users = await getUsersDB({});
+async function listAllUsers(language?: string): Promise<void> {
+  const users = await getUsersDetailsDB(language);
   if (users.length === 0) {
     logger.info('No data found');
   } else {
-    users.forEach((user: IUser) => {
+    users.forEach((user: IUserDTO) => {
       logger.log(user);
     });
   }
@@ -49,28 +54,11 @@ async function listAllUsers(): Promise<void> {
  * @throws {Error} Throws an error if listing users fails.
  */
 async function listAllUsersByLocation(location: string): Promise<void> {
-  const users = await getUsersDB({ location });
+  const users = await getUsersByLocationDB(location);
   if (users.length === 0) {
     logger.info('No data found');
   } else {
-    users.forEach((user: IUser) => {
-      logger.log(user);
-    });
-  }
-}
-
-/**
- * Lists users in the database based on the specified programming language.
- *
- * @param {string} language - The programming language to filter users by.
- * @throws {Error} Throws an error if listing users fails.
- */
-async function listAllUsersByLanguage(language: string): Promise<void> {
-  const users = await getUsersDB({ language });
-  if (users.length === 0) {
-    logger.info('No data found');
-  } else {
-    users.forEach((user: IUser) => {
+    users.forEach((user: IUserDTO) => {
       logger.log(user);
     });
   }
@@ -80,10 +68,10 @@ async function listAllUsersByLanguage(language: string): Promise<void> {
  * Fetches user information from the GitHub API.
  *
  * @param {string} username - The GitHub username to fetch.
- * @returns {Promise<IUser>} A promise that resolves the fetched user
+ * @returns {Promise<IUserDTO>} A promise that resolves the fetched user
  * @throws {Error} Throws an error if fetching fails.
  */
-async function fetchUser(username: string): Promise<IUser> {
+async function fetchUser(username: string): Promise<IUserDTO> {
   try {
     const url = `https://api.github.com/users/${username}`;
     const response = await axios.get(url);
@@ -126,7 +114,6 @@ export {
   fetchAndStoreUserInformation,
   listAllUsers,
   listAllUsersByLocation,
-  listAllUsersByLanguage,
   fetchUser,
   fetchProgrammingLanguages,
 };

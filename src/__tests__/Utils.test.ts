@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IUser } from '../modules/User/dtos/IUser';
+import { IUserDTO } from '../modules/User/dtos/IUserDTO';
 import {
   extractProgrammingLanguages,
   validateUser,
@@ -12,7 +12,7 @@ describe('Validate User tests', () => {
 
   describe('It should succeed to', () => {
     it('Validate a valid user', async () => {
-      const mockUser: IUser = {
+      const mockUser: IUserDTO = {
         name: 'Rui',
         bio: 'I love programming',
         followers: 10,
@@ -27,7 +27,7 @@ describe('Validate User tests', () => {
 
   describe('It should fail to', () => {
     it('validate a user without name', () => {
-      const mockUser: IUser = {
+      const mockUser: IUserDTO = {
         name: null as any,
         bio: 'I love programming',
         followers: 10,
@@ -42,42 +42,8 @@ describe('Validate User tests', () => {
       );
     });
 
-    it('validate a user without location', () => {
-      const mockUser: IUser = {
-        name: 'Rui',
-        bio: 'I love programming',
-        followers: 10,
-        following: 10,
-        location: null as any,
-        public_repos: 2,
-        type: 'User',
-      };
-
-      // Should throw an error
-      expect(() => validateUser(mockUser)).toThrow(
-        'Missing properties in [ValidateUser]: location',
-      );
-    });
-
-    it('validate a user without name and location', () => {
-      const mockUser: IUser = {
-        name: null as any,
-        bio: 'I love programming',
-        followers: 10,
-        following: 10,
-        public_repos: 2,
-        location: null as any,
-        type: 'User',
-      };
-
-      // Should throw an error
-      expect(() => validateUser(mockUser)).toThrow(
-        'Missing properties in [ValidateUser]: name, location',
-      );
-    });
-
     it('validate a user with an empty string for the name', () => {
-      const mockUser: IUser = {
+      const mockUser: IUserDTO = {
         name: '',
         bio: 'I love programming',
         followers: 10,
@@ -89,21 +55,6 @@ describe('Validate User tests', () => {
 
       expect(() => validateUser(mockUser)).toThrow(
         'Missing properties in [ValidateUser]: name',
-      );
-    });
-
-    it('validate a user with an empty string for the location', () => {
-      const mockUser: IUser = {
-        name: 'Rui',
-        bio: 'I love programming',
-        followers: 10,
-        following: 10,
-        location: '',
-        public_repos: 2,
-        type: 'User',
-      };
-      expect(() => validateUser(mockUser)).toThrow(
-        'Missing properties in [ValidateUser]: location',
       );
     });
   });

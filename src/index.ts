@@ -3,7 +3,6 @@ import 'dotenv/config';
 import {
   fetchAndStoreUserInformation,
   listAllUsers,
-  listAllUsersByLanguage,
   listAllUsersByLocation,
 } from './shared/services/GitHubService';
 import { handleError } from './shared/utils/Utils';
@@ -64,7 +63,7 @@ yargs
     },
     async (args) => {
       try {
-        await listAllUsersByLanguage(args.language);
+        await listAllUsers(args.language);
       } catch (error: unknown) {
         handleError(error);
       }

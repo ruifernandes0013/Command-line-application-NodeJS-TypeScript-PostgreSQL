@@ -1,38 +1,39 @@
-import { db } from '../../../database/Database';
-import { IUser } from '../dtos/IUser';
-import { IUserSearchParams } from '../dtos/IUserSearchParams';
+import { db, pgpInstance } from '../../../database/Database';
+import { IUserDTO } from '../dtos/IUserDTO';
+import { IUserDetailsDTO } from '../dtos/IUserDetailsDTO';
 
 /**
  * Stores user information in the database, updating if the user already exists.
  *
- * @param {IUser} user - The user object to store.
- * @returns {Promise<IUser>} A promise that resolves the stored or updated user.
+ * @param {IUserDTO} user - The user object to store.
+ * @returns {Promise<IUserDTO>} A promise that resolves the stored/updated user.
  * @throws {Error} Throws an error if storing or updating fails.
  */
-async function storeUserDB(user: IUser): Promise<IUser> {
+async function storeUserDB(user: IUserDTO): Promise<IUserDTO> {
   try {
-    const text = `INSERT INTO users
-      (name, type, location, bio, publicRepos, followers,
-       following, createdAt, updatedAt)
-       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       ON CONFLICT (name) 
-       DO UPDATE SET type = $2, location = $3, bio = $4,
-       publicRepos = $5, followers = $6, following = $7,
-       updatedAt = CURRENT_TIMESTAMP RETURNING *`;
+    const data = {
+      name: user.name,
+      type: user.type,
+      location: user.location,
+      bio: user.bio,
+      publicrepos: user.public_repos,
+      followers: user.followers,
+      following: user.following,
+    };
 
-    const values = [
-      user.name,
-      user.type,
-      user.location,
-      user.bio,
-      user.public_repos,
-      user.followers,
-      user.following,
-      new Date(),
-      null,
-    ];
-    const result = await db.one(text, values);
-    return result as IUser;
+    let query = pgpInstance.helpers.insert(data, null, 'users');
+    query += ` ON CONFLICT (name) DO UPDATE SET 
+    type = EXCLUDED.type,
+    location = EXCLUDED.location,
+    bio = EXCLUDED.bio,
+    publicRepos = EXCLUDED.publicRepos,
+    followers = EXCLUDED.followers,
+    following = EXCLUDED.following,
+    updatedAt = CURRENT_TIMESTAMP
+  RETURNING *`;
+
+    const result = await db.one(query);
+    return result as IUserDTO;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed storing user in database: ${error.message}`);
@@ -43,29 +44,69 @@ async function storeUserDB(user: IUser): Promise<IUser> {
 }
 
 /**
- * Retrieves users from the database based on optional search parameters.
+ * Retrieves users details from the database.
  *
- * @param {IUserSearchParams} params - Search parameters (location, language).
- * @returns {Promise<IUser[]>} A promise that resolves an array of users
+ *  @param {string} language- Search by a language
+ * @returns {Promise<IUserDTO[]>} Resolves a list of users details
  * @throws {Error} Throws an error if fetching users fails.
  */
-async function getUsersDB(params: IUserSearchParams): Promise<IUser[]> {
+async function getUsersDetailsDB(
+  language?: string,
+): Promise<IUserDetailsDTO[]> {
   try {
-    let text = 'SELECT * FROM Users';
-    const values: string[] = [];
-
-    if (params.location) {
-      text += ' WHERE LOWER(location) LIKE LOWER($1)';
-      values.push(`%${params.location}%`);
+    const values = language ? [`%${language.toLowerCase()}%`] : [];
+    const query = `
+      SELECT
+        u.id,
+        u.name,
+        u.type,
+        u.location,
+        u.bio,
+        u.publicRepos,
+        u.followers,
+        u.following,
+        u.createdAt,
+        u.updatedAt,
+        ARRAY_AGG(ul.language) AS languages
+      FROM
+        Users u
+      INNER JOIN
+        UserLanguages ul ON u.id = ul.userId
+        ${language ? 'AND LOWER(language) LIKE LOWER($1)' : ''}
+      GROUP BY
+        u.id;
+    `;
+    const result = await db.manyOrNone(query, values);
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(
+        `Failed getting users details from database: ${error.message}`,
+      );
+    } else {
+      throw new Error(`An unknown error occurred: ${error}`);
     }
+  }
+}
 
-    if (params.language) {
-      text += ` INNER JOIN UserLanguages
-         ON Users.id = UserLanguages.userId AND LOWER(language) LIKE LOWER($1)`;
-      values.push(`%${params.language}%`);
-    }
+/**
+ * Retrieves users from the database based on the location
+ *
+ * @param {string} location- Search by a location
+ * @returns {Promise<IUserDTO[]>} A promise that resolves an array of users
+ * @throws {Error} Throws an error if fetching users fails.
+ */
+async function getUsersByLocationDB(location: string): Promise<IUserDTO[]> {
+  try {
+    const values = `%${location}%`;
 
-    const result = await db.manyOrNone(text, values);
+    const query = `
+      SELECT *
+      FROM Users
+      WHERE LOWER(location) LIKE LOWER($1)
+      `;
+
+    const result = await db.manyOrNone(query, values);
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -76,4 +117,4 @@ async function getUsersDB(params: IUserSearchParams): Promise<IUser[]> {
   }
 }
 
-export { storeUserDB, getUsersDB };
+export { storeUserDB, getUsersByLocationDB, getUsersDetailsDB };

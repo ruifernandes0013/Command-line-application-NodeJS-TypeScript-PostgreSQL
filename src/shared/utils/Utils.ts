@@ -1,10 +1,9 @@
-import { IUser } from '../../modules/User/dtos/IUser';
+import { IUserDTO } from '../../modules/User/dtos/IUserDTO';
 import logger from '../logger';
 
-function validateUser(user: IUser): void {
+function validateUser(user: IUserDTO): void {
   const missingProperties = [];
   if (!user.name) missingProperties.push('name');
-  if (!user.location) missingProperties.push('location');
   if (missingProperties.length)
     throw new Error(
       `Missing properties in [ValidateUser]: ${missingProperties.join(', ')}`,
