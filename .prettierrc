@@ -1,0 +1,12 @@
+{
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "arrowParens": "always",
+  "noMultipleEmptyLines": true,
+  "objectCurlySpacing": "always",
+  "keywordSpacing": true,
+  "maxLen": 80,
+  "indent": 2
+}
